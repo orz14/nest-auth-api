@@ -8,6 +8,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { User } from '@prisma/client';
 import { ulid } from 'ulid';
+import { LoginDto } from './dtos/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -45,19 +46,18 @@ export class AuthService {
     return user?.refresh_token === refreshToken;
   }
 
-  async login(data: {
-    email: string;
-    password: string;
-    rememberMe?: boolean;
-  }): Promise<object> {
+  async login(data: LoginDto): Promise<object> {
     const user = await this.prisma.user.findUnique({
       where: { email: data.email },
     });
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
     const isMatch = await bcrypt.compare(data.password, user.password);
-    if (isMatch) {
+    if (!isMatch) {
+      throw new ForbiddenException('Invalid password');
+    } else {
       const refreshToken = await this.generateRefreshToken(user.id);
       const payload = {
         id: user.id,
@@ -70,12 +70,14 @@ export class AuthService {
         data: payload,
         access_token: token,
       };
-    } else {
-      throw new ForbiddenException('Invalid password');
     }
   }
 
-  async refreshToken(user: any): Promise<object> {
+  async refreshToken(user: {
+    id: number;
+    name: string;
+    email: string;
+  }): Promise<object> {
     const refreshToken = await this.generateRefreshToken(user.id);
     const payload = {
       id: user.id,
