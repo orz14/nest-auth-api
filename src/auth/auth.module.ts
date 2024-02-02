@@ -8,6 +8,7 @@ import { JwtStrategy } from '../guards/jwt.strategy';
 @Module({
   imports: [
     JwtModule.register({
+      global: true,
       secret: process.env.JWT_SECRET,
     }),
   ],
