@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { JwtStrategy } from 'src/guards/jwt.strategy';
-import { AuthService } from 'src/auth/auth.service';
+import { JwtStrategy } from '../guards/jwt.strategy';
+import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 
 @Module({
