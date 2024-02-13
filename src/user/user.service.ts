@@ -12,7 +12,7 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async users(): Promise<object> {
+  async users(): Promise<any> {
     const result = await this.prisma.user.findMany();
     return {
       status: true,
@@ -20,7 +20,7 @@ export class UserService {
     };
   }
 
-  async create(data: CreateUserDto): Promise<object> {
+  async create(data: CreateUserDto): Promise<any> {
     const { name, email, password } = data;
 
     const existingUser = await this.prisma.user.findUnique({
@@ -45,7 +45,7 @@ export class UserService {
     };
   }
 
-  async find(id: number): Promise<object> {
+  async find(id: number): Promise<any> {
     const result = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -58,7 +58,7 @@ export class UserService {
     };
   }
 
-  async update(id: number, data: UpdateUserDto): Promise<object> {
+  async update(id: number, data: UpdateUserDto): Promise<any> {
     await this.find(id);
     const { name, email } = data;
     if (email) {
@@ -84,7 +84,7 @@ export class UserService {
     };
   }
 
-  async delete(id: number): Promise<object> {
+  async delete(id: number): Promise<any> {
     await this.find(id);
     await this.prisma.user.delete({ where: { id } });
     return {

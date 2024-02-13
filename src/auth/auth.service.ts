@@ -25,7 +25,7 @@ export class AuthService {
     const payload = { data: credentials };
     return this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
-      expiresIn: rememberMe ? '1h' : '60s',
+      expiresIn: rememberMe ? '7d' : '1d',
     });
   }
 
@@ -46,7 +46,7 @@ export class AuthService {
     return user?.refresh_token === refreshToken;
   }
 
-  async login(data: LoginDto): Promise<object> {
+  async login(data: LoginDto): Promise<any> {
     const user = await this.prisma.user.findUnique({
       where: { email: data.email },
     });
@@ -77,7 +77,7 @@ export class AuthService {
     id: number;
     name: string;
     email: string;
-  }): Promise<object> {
+  }): Promise<any> {
     const refreshToken = await this.generateRefreshToken(user.id);
     const payload = {
       id: user.id,
@@ -89,7 +89,7 @@ export class AuthService {
     return { access_token: newAccessToken };
   }
 
-  async logout(id: number): Promise<object> {
+  async logout(id: number): Promise<any> {
     await this.prisma.user.update({
       where: { id },
       data: { refresh_token: null },
