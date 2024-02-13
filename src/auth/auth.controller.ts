@@ -14,19 +14,19 @@ export class AuthController {
   ) {}
 
   @Post('/register')
-  async authRegister(@Body() data: CreateUserDto): Promise<object> {
+  async authRegister(@Body() data: CreateUserDto): Promise<any> {
     return await this.userService.create(data);
   }
 
   @Post('/login')
-  async authLogin(@Body() data: LoginDto): Promise<object> {
+  async authLogin(@Body() data: LoginDto): Promise<any> {
     return await this.authService.login(data);
   }
 
   @UseGuards(AuthGuard('jwt'))
   // @Serialize(UserDto)
   @Get('/me')
-  currentUser(@User() user: object): object {
+  currentUser(@User() user: object): any {
     return user;
   }
 
@@ -34,13 +34,13 @@ export class AuthController {
   @Post('/refresh-token')
   async refreshToken(
     @User() user: { id: number; name: string; email: string },
-  ): Promise<object> {
+  ): Promise<any> {
     return await this.authService.refreshToken(user);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Post('/logout')
-  async authLogout(@User() user: { id: number }): Promise<object> {
+  async authLogout(@User() user: { id: number }): Promise<any> {
     return await this.authService.logout(user.id);
   }
 }
