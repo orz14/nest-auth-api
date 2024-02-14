@@ -41,7 +41,6 @@ export class AuthService {
   }
 
   async generateRefreshToken(id: string): Promise<string> {
-    // TODO: Refactor refreshToken
     const refreshToken = this.generateRandomString();
     await this.prisma.user.update({
       where: { id },
