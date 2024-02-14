@@ -30,7 +30,7 @@ export class UserController {
 
   @Get('/:id')
   async findUser(@Param('id') id: string): Promise<any> {
-    return await this.userService.find(Number(id));
+    return await this.userService.find(id);
   }
 
   @Patch('/:id')
@@ -38,11 +38,11 @@ export class UserController {
     @Param('id') id: string,
     @Body() data: UpdateUserDto,
   ): Promise<any> {
-    return await this.userService.update(Number(id), data);
+    return await this.userService.update(id, data);
   }
 
   @Delete('/:id')
   async deleteUser(@Param('id') id: string): Promise<any> {
-    return await this.userService.delete(Number(id));
+    return await this.userService.delete(id);
   }
 }

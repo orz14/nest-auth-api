@@ -7,6 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { ulid } from 'ulid';
 
 @Injectable()
 export class UserService {
@@ -33,6 +34,7 @@ export class UserService {
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await this.prisma.user.create({
       data: {
+        id: ulid(),
         name,
         email,
         password: hashedPassword,
@@ -45,10 +47,8 @@ export class UserService {
     };
   }
 
-  async find(id: number): Promise<any> {
-    const result = await this.prisma.user.findUnique({
-      where: { id },
-    });
+  async find(id: string): Promise<any> {
+    const result = await this.prisma.user.findUnique({ where: { id } });
     if (!result) {
       throw new NotFoundException('User not found');
     }
@@ -58,7 +58,7 @@ export class UserService {
     };
   }
 
-  async update(id: number, data: UpdateUserDto): Promise<any> {
+  async update(id: string, data: UpdateUserDto): Promise<any> {
     await this.find(id);
     const { name, email } = data;
     if (email) {
@@ -84,7 +84,7 @@ export class UserService {
     };
   }
 
-  async delete(id: number): Promise<any> {
+  async delete(id: string): Promise<any> {
     await this.find(id);
     await this.prisma.user.delete({ where: { id } });
     return {

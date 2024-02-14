@@ -7,7 +7,6 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { User } from '@prisma/client';
-import { ulid } from 'ulid';
 import { LoginDto } from './dtos/login.dto';
 
 @Injectable()
@@ -17,7 +16,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUserById(id: number): Promise<User> {
+  async validateUserById(id: string): Promise<User | null> {
     return await this.prisma.user.findUnique({ where: { id } });
   }
 
@@ -29,21 +28,34 @@ export class AuthService {
     });
   }
 
-  async generateRefreshToken(id: number): Promise<string> {
-    const refreshToken = ulid();
+  generateRandomString(): string {
+    const characters =
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let randomString = '';
+
+    for (let i = 0; i < 50; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      randomString += characters.charAt(randomIndex);
+    }
+    return randomString;
+  }
+
+  async generateRefreshToken(id: string): Promise<string> {
+    // TODO: Refactor refreshToken
+    const refreshToken = this.generateRandomString();
     await this.prisma.user.update({
       where: { id },
-      data: { refresh_token: refreshToken },
+      data: { refreshToken },
     });
     return refreshToken;
   }
 
   async validateRefreshToken(
-    id: number,
+    id: string,
     refreshToken: string,
   ): Promise<boolean> {
     const user = await this.prisma.user.findUnique({ where: { id } });
-    return user?.refresh_token === refreshToken;
+    return user?.refreshToken === refreshToken;
   }
 
   async login(data: LoginDto): Promise<any> {
@@ -63,18 +75,18 @@ export class AuthService {
         id: user.id,
         name: user.name,
         email: user.email,
-        refresh_token: refreshToken,
+        refreshToken,
       };
       const token = this.generateToken(payload, data.rememberMe);
       return {
         data: payload,
-        access_token: token,
+        accessToken: token,
       };
     }
   }
 
   async refreshToken(user: {
-    id: number;
+    id: string;
     name: string;
     email: string;
   }): Promise<any> {
@@ -83,16 +95,16 @@ export class AuthService {
       id: user.id,
       name: user.name,
       email: user.email,
-      refresh_token: refreshToken,
+      refreshToken,
     };
     const newAccessToken = this.generateToken(payload);
-    return { access_token: newAccessToken };
+    return { accessToken: newAccessToken };
   }
 
-  async logout(id: number): Promise<any> {
+  async logout(id: string): Promise<any> {
     await this.prisma.user.update({
       where: { id },
-      data: { refresh_token: null },
+      data: { refreshToken: null },
     });
     return {
       status: true,

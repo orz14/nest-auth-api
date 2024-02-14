@@ -2,7 +2,7 @@ import { Exclude, Expose } from 'class-transformer';
 
 export class UserDto {
   @Expose()
-  id: number;
+  id: string;
 
   @Expose()
   name: string;
@@ -14,5 +14,5 @@ export class UserDto {
   password: string;
 
   @Exclude()
-  refresh_token: string;
+  refreshToken: string;
 }

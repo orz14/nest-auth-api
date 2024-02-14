@@ -20,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     const isRefreshTokenValid = await this.authService.validateRefreshToken(
       user.id,
-      payload.data.refresh_token,
+      payload.data.refreshToken,
     );
     if (!isRefreshTokenValid) {
       throw new UnauthorizedException('Invalid refresh token');
