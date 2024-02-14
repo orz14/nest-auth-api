@@ -33,14 +33,14 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @Post('/refresh-token')
   async refreshToken(
-    @User() user: { id: number; name: string; email: string },
+    @User() user: { id: string; name: string; email: string },
   ): Promise<any> {
     return await this.authService.refreshToken(user);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Post('/logout')
-  async authLogout(@User() user: { id: number }): Promise<any> {
+  async authLogout(@User() user: { id: string }): Promise<any> {
     return await this.authService.logout(user.id);
   }
 }

@@ -11,9 +11,11 @@ datasource db {
 }
 
 model User {
-  id            Int     @default(autoincrement()) @id
-  name          String
-  email         String  @unique
-  password      String
-  refresh_token String? @unique
+  id            String    @db.VarChar(50) @id
+  name          String    @db.VarChar(100)
+  email         String    @db.VarChar(100) @unique
+  password      String    @db.VarChar(255)
+  refreshToken  String?   @db.VarChar(100) @unique
+  createdAt     DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime  @default(now()) @updatedAt @db.Timestamp(6)
 }
