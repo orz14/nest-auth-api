@@ -17,6 +17,7 @@ export class UserService {
     const result = await this.prisma.user.findMany();
     return {
       status: true,
+      statusCode: 200,
       data: result,
     };
   }
@@ -43,6 +44,7 @@ export class UserService {
 
     return {
       status: true,
+      statusCode: 201,
       data: result,
     };
   }
@@ -54,6 +56,7 @@ export class UserService {
     }
     return {
       status: true,
+      statusCode: 200,
       data: result,
     };
   }
@@ -80,6 +83,7 @@ export class UserService {
 
     return {
       status: true,
+      statusCode: 200,
       data: result,
     };
   }
@@ -89,6 +93,7 @@ export class UserService {
     await this.prisma.user.delete({ where: { id } });
     return {
       status: true,
+      statusCode: 200,
       message: `User with id ${id} has been deleted`,
     };
   }

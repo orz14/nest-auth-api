@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Patch,
   Post,
@@ -19,21 +20,25 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get()
+  @HttpCode(200)
   async getAllUsers(): Promise<any> {
     return await this.userService.users();
   }
 
   @Post()
+  @HttpCode(201)
   async createUser(@Body() data: CreateUserDto): Promise<any> {
     return await this.userService.create(data);
   }
 
   @Get('/:id')
+  @HttpCode(200)
   async findUser(@Param('id') id: string): Promise<any> {
     return await this.userService.find(id);
   }
 
   @Patch('/:id')
+  @HttpCode(200)
   async updateUser(
     @Param('id') id: string,
     @Body() data: UpdateUserDto,
@@ -42,6 +47,7 @@ export class UserController {
   }
 
   @Delete('/:id')
+  @HttpCode(200)
   async deleteUser(@Param('id') id: string): Promise<any> {
     return await this.userService.delete(id);
   }

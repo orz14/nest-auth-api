@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateUserDto } from '../user/dtos/create-user.dto';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
@@ -14,11 +21,13 @@ export class AuthController {
   ) {}
 
   @Post('/register')
+  @HttpCode(201)
   async authRegister(@Body() data: CreateUserDto): Promise<any> {
     return await this.userService.create(data);
   }
 
   @Post('/login')
+  @HttpCode(200)
   async authLogin(@Body() data: LoginDto): Promise<any> {
     return await this.authService.login(data);
   }
@@ -26,12 +35,14 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   // @Serialize(UserDto)
   @Get('/me')
+  @HttpCode(200)
   currentUser(@User() user: object): any {
     return user;
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Post('/refresh-token')
+  @HttpCode(201)
   async refreshToken(
     @User() user: { id: string; name: string; email: string },
   ): Promise<any> {
@@ -40,6 +51,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard('jwt'))
   @Post('/logout')
+  @HttpCode(200)
   async authLogout(@User() user: { id: string }): Promise<any> {
     return await this.authService.logout(user.id);
   }

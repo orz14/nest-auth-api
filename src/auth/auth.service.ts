@@ -79,6 +79,7 @@ export class AuthService {
       const token = this.generateToken(payload, data.rememberMe);
       return {
         data: payload,
+        statusCode: 200,
         accessToken: token,
       };
     }
@@ -97,7 +98,10 @@ export class AuthService {
       refreshToken,
     };
     const newAccessToken = this.generateToken(payload);
-    return { accessToken: newAccessToken };
+    return {
+      statusCode: 201,
+      accessToken: newAccessToken,
+    };
   }
 
   async logout(id: string): Promise<any> {
@@ -107,6 +111,7 @@ export class AuthService {
     });
     return {
       status: true,
+      statusCode: 200,
       message: 'Logout successful',
     };
   }
