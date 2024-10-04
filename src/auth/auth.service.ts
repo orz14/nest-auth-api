@@ -78,8 +78,8 @@ export class AuthService {
       };
       const token = this.generateToken(payload, data.rememberMe);
       return {
-        data: payload,
         statusCode: 200,
+        data: payload,
         accessToken: token,
       };
     }
