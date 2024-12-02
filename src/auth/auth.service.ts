@@ -61,24 +61,28 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({
       where: { email: data.email },
     });
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
     const isMatch = await bcrypt.compare(data.password, user.password);
+
     if (!isMatch) {
       throw new ForbiddenException('Invalid password');
     } else {
       const refreshToken = await this.generateRefreshToken(user.id);
+
       const payload = {
         id: user.id,
         name: user.name,
         email: user.email,
         refreshToken,
       };
+
       const token = this.generateToken(payload, data.rememberMe);
+
       return {
-        statusCode: 200,
         data: payload,
         accessToken: token,
       };
@@ -114,5 +118,9 @@ export class AuthService {
       statusCode: 200,
       message: 'Logout successful',
     };
+  }
+
+  async checkConnection(): Promise<any> {
+    await this.prisma.$queryRaw`SELECT current_database() AS database_name`;
   }
 }

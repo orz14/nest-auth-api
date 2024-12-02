@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   Post,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from '../user/dtos/create-user.dto';
@@ -12,6 +13,7 @@ import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from './decorators/user.decorator';
 import { LoginDto } from './dtos/login.dto';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -27,9 +29,23 @@ export class AuthController {
   }
 
   @Post('/login')
-  @HttpCode(200)
-  async authLogin(@Body() data: LoginDto): Promise<any> {
-    return await this.authService.login(data);
+  async authLogin(@Body() data: LoginDto, @Res() res: Response): Promise<any> {
+    try {
+      const response = await this.authService.login(data);
+
+      return res.status(200).json({
+        status: true,
+        statusCode: 200,
+        data: response?.data,
+        accessToken: response?.accessToken,
+      });
+    } catch (err) {
+      return res.status(err.status).json({
+        status: false,
+        statusCode: err.status,
+        message: err.message,
+      });
+    }
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -54,5 +70,23 @@ export class AuthController {
   @HttpCode(200)
   async authLogout(@User() user: { id: string }): Promise<any> {
     return await this.authService.logout(user.id);
+  }
+
+  @Post('/check-connection')
+  async checkConnection(@Res() res: Response): Promise<any> {
+    try {
+      await this.authService.checkConnection();
+
+      return res.status(200).json({
+        status: true,
+        statusCode: 200,
+      });
+    } catch (err) {
+      return res.status(err.status).json({
+        status: false,
+        statusCode: err.status,
+        message: err.message,
+      });
+    }
   }
 }
