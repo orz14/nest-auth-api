@@ -71,22 +71,4 @@ export class AuthController {
   async authLogout(@User() user: { id: string }): Promise<any> {
     return await this.authService.logout(user.id);
   }
-
-  @Post('/check-connection')
-  async checkConnection(@Res() res: Response): Promise<any> {
-    try {
-      await this.authService.checkConnection();
-
-      return res.status(200).json({
-        status: true,
-        statusCode: 200,
-      });
-    } catch (err) {
-      return res.status(err.status).json({
-        status: false,
-        statusCode: err.status,
-        message: err.message,
-      });
-    }
-  }
 }

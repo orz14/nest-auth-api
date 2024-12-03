@@ -119,8 +119,4 @@ export class AuthService {
       message: 'Logout successful',
     };
   }
-
-  async checkConnection(): Promise<any> {
-    await this.prisma.$queryRaw`SELECT current_database() AS database_name`;
-  }
 }
